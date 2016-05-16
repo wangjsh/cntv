@@ -1,0 +1,67 @@
+#coding=utf-8
+import re
+
+#formatProName 函数，将抓取的原始电视节目名字进行处理
+def _formatProName(str):
+    pattern = re.compile(u"(.+)([(|（])(.+)([)|）])")
+    match = pattern.match(str)
+    if match:
+        #print 1
+        return match.group(1)
+    pattern = re.compile(u"(《)(.+)(》)")
+    match = pattern.match(str)
+    if match:
+        #print 2
+        return match.group(2)
+    pattern = re.compile(u"(.+)(《)(.+)(》)")
+    match = pattern.match(str)
+    if match:
+        #print 3
+        return match.group(3)
+    return str
+
+def manageJianjie(str):
+    pattern = re.compile(u"(.+)(')(.+)(')")
+    match = pattern.match(str)
+    if match:
+        str = match.group(3)
+    else:
+        pass
+    return str
+#转化为unicode编码，如下调试正则表达式用到
+def str2unicode(pName):
+    if isinstance(pName, unicode) == False:
+        pName = unicode(pName,'utf8')
+    else:
+        pass
+    return pName
+def manageUrl(new, str):
+    pattern = re.compile(u"(http:\/\/dianshiju\.cntv\.cn)(.+)")
+    match = pattern.match(str)
+    if match:
+        return new + match.group(2)
+    else:
+        pass
+    return str
+def formatProName(str):
+    str = _formatProName(str)
+    pattern = re.compile(u"(.+)(\d+)")
+    match = pattern.match(str)
+    if match:
+        return match.group(1)
+    pattern = re.compile(u"(.+)(第.+季)")
+    match = pattern.match(str)
+    if match:
+        return match.group(1)
+    return str
+#http://dianshiju.cctv.com/2014/04/22/VIDA1398151630136724.shtml
+#http://dianshiju.cntv.cn/2014/04/22/VIDA1398151630136724.shtml
+#print manageUrl("http://dianshiju.cctv.com", "http://dianshiju.cntv.cn/2014/04/22/VIDA1398151630136724.shtml")
+
+'''
+s = "var brief='该剧讲述了小心翼翼而又善良的女孩与豪门子弟因一次偶然的失误被迫结婚，在相处的过程中逐渐发现真爱的故事。……';"
+s.strip()
+s = str2unicode(s)
+s = manageJianjie(s)
+print s
+'''
