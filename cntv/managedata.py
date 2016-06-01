@@ -67,6 +67,19 @@ def formatProName(str):
         #print 24
         return match.group(1)
     return str
+    
+def manageJianjie(str):
+    str = str.strip()
+    pattern = re.compile(u"(var brief=\')(.+)(\')")
+    match = pattern.match(str)
+    if match:
+        str = match.group(2)
+    else:
+        pass
+    str = str.strip()
+    if len(str.strip()) == 0:
+        str = '_null'
+    return str
 '''
 s = "武媚娘传奇TVB版"
 s.strip()

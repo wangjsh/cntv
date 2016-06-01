@@ -18,16 +18,23 @@ def _formatProName(str):
     if match:
         #print 3
         return match.group(3)
-    return str
-
-def manageJianjie(str):
-    pattern = re.compile(u"(.+)(')(.+)(')")
+    pattern = re.compile(u"(.+)(\s+)(.+)")
     match = pattern.match(str)
     if match:
-        str = match.group(3)
-    else:
-        pass
+        #print 4
+        return match.group(1)
+    pattern = re.compile(u"(.+)([\[|【])(.+)([\]|】])")
+    match = pattern.match(str)
+    if match:
+        #print 5
+        return match.group(1)
+    pattern = re.compile(u"(.+)(未删减版|TV版|下部|上部|卫视版|完整版|TVB版)")
+    match = pattern.match(str)
+    if match:
+        #print 6
+        return match.group(1)
     return str
+
 #转化为unicode编码，如下调试正则表达式用到
 def str2unicode(pName):
     if isinstance(pName, unicode) == False:
@@ -35,33 +42,50 @@ def str2unicode(pName):
     else:
         pass
     return pName
-def manageUrl(new, str):
-    pattern = re.compile(u"(http:\/\/dianshiju\.cntv\.cn)(.+)")
-    match = pattern.match(str)
-    if match:
-        return new + match.group(2)
-    else:
-        pass
-    return str
+
 def formatProName(str):
     str = _formatProName(str)
-    pattern = re.compile(u"(.+)(\d+)")
+    #print str
+    pattern = re.compile(u"([^\d]+)(\d+)$")
     match = pattern.match(str)
     if match:
+        #print 21
         return match.group(1)
-    pattern = re.compile(u"(.+)(第.+季)")
+    pattern = re.compile(u"(.+)([\(|（])(.+)([\)|）])")
     match = pattern.match(str)
     if match:
+        #print 22
+        return match.group(1)
+    pattern = re.compile(u"(.+)(第.+[季|部])")
+    match = pattern.match(str)
+    if match:
+        #print 23
+        return match.group(1)
+    pattern = re.compile(u"(.+)([Ⅰ|Ⅱ|Ⅲ|Ⅳ|Ⅴ|Ⅵ|Ⅶ|Ⅷ|Ⅸ|Ⅹ|Ⅺ]+)")
+    match = pattern.match(str)
+    if match:
+        #print 24
         return match.group(1)
     return str
-#http://dianshiju.cctv.com/2014/04/22/VIDA1398151630136724.shtml
-#http://dianshiju.cntv.cn/2014/04/22/VIDA1398151630136724.shtml
-#print manageUrl("http://dianshiju.cctv.com", "http://dianshiju.cntv.cn/2014/04/22/VIDA1398151630136724.shtml")
-
+    
+def manageJianjie(str):
+    str = str.strip()
+    pattern = re.compile(u"(var brief=\')(.+)(\')")
+    match = pattern.match(str)
+    if match:
+        str = match.group(2)
+    else:
+        pass
+    str = str.strip()
+    if len(str.strip()) == 0:
+        str = '_null'
+    return str
 '''
-s = "var brief='该剧讲述了小心翼翼而又善良的女孩与豪门子弟因一次偶然的失误被迫结婚，在相处的过程中逐渐发现真爱的故事。……';"
+s = "武媚娘传奇TVB版"
 s.strip()
 s = str2unicode(s)
-s = manageJianjie(s)
+s = formatProName(s)
 print s
 '''
+s = " var brief='法语系女硕士乔菲，从小立志做一名翻译。偶然一次机会她邂逅了翻译天才程家阳，而乔菲为躲避前男友高家明，却误打误撞与程家阳结下梁子。不料在第二日的高翻院面试中，乔菲发现程家阳竟是自己的考官。两人带着对彼此的误会开始了一场较量。';"
+print manageJianjie(s)
